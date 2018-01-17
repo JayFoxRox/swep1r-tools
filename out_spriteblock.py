@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
-import sys
+import os
 from PIL import Image
+
+from arguments import parser
+
 
 def read8(f):
   return f.read(1)[0]
@@ -26,7 +29,9 @@ def shifter(a1):
     result = 16
   return result
 
-with open(sys.argv[1], 'rb') as f:
+args = parser.parse_args()
+
+with open(args.input, 'rb') as f:
   count = read32(f)
   for i in range(0, count - 1):
     f.seek(4 + 4 * i)
@@ -174,7 +179,8 @@ with open(sys.argv[1], 'rb') as f:
       reader = pixel_p8
       f.seek(section_a + unk4)
       buf = f.read(256 * 2)
-      with open("/tmp/swep1r/sprite-%d-palette.bin" % i, 'wb') as t:
+      sprite_palette = os.path.join(args.out, "sprite-%d-palette.bin" % i)
+      with open(sprite_palette, 'wb') as t:
         t.write(buf)
       f.seek(section_a + unk4)
       pixel_palette = []
@@ -246,4 +252,5 @@ with open(sys.argv[1], 'rb') as f:
         if y == height:
           print("Complete")
           break
-    im.save("/tmp/swep1r/sprite-%d.png" % i, 'PNG')
+    sprite = os.path.join(args.out, 'sprite-%d.png' % i)
+    im.save(sprite, 'PNG')

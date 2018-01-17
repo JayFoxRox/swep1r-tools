@@ -2,9 +2,13 @@
 
 import sys
 
+from arguments import multiparser
+
 strings = {}
 
-for path in sys.argv[1:]:
+args = multiparser.parse_args()
+
+for path in args.input:
   with open(path, 'rb') as in_file:
     data = in_file.read()
     

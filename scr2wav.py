@@ -4,10 +4,13 @@
 # Basically it's just XOR'd with 0x55, 0x55, 0xEE, 0xEE and the name Caesar shifted.
 # This script undoes this mess, but the files will still be suffix'd with ".rbq"
 
-import sys
 import os
 
-for path in sys.argv[1:]:
+from arguments import multiparser
+
+args = multiparser.parse_args()
+
+for path in args.input:
   filename = os.path.basename(path)
   real_filename = ''
   for s in filename:
