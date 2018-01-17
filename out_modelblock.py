@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
-import sys
 import struct
+
+import os
 from PIL import Image
+
+from arguments import parser
+
 
 def read8(f):
   return f.read(1)[0]
@@ -121,7 +125,9 @@ if False:
   #  return result;
   pass
 
-with open(sys.argv[1], 'rb') as f:
+args = parser.parse_args()
+
+with open(args.input, 'rb') as f:
   count = read32(f)
   for i in range(0, count - 1):
     f.seek(4 + 8 * i)
@@ -136,13 +142,15 @@ with open(sys.argv[1], 'rb') as f:
     f.seek(a)
     buf = f.read(length1)
 
-    with open("/tmp/swep1r/model-%d-a.bin" % i, 'wb') as t:
+    model_a = os.path.join(args.out, 'model-%d-a.bin' % i)
+    with open(model_a, 'wb') as t:
       t.write(buf)
 
     f.seek(b)
     buf = f.read(length2)
 
-    with open("/tmp/swep1r/model-%d-b.bin" % i, 'wb') as t:
+    model_b = os.path.join(args.out, 'model-%d-b.bin' % i)
+    with open(model_b, 'wb') as t:
       t.write(buf)
 
     f.seek(a)

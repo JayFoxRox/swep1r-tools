@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
-import sys
+import os
 from PIL import Image
+
+from arguments import parser
+
 
 def read8(f):
   return f.read(1)[0]
@@ -26,7 +29,11 @@ def shifter(a1):
     result = 16
   return result
 
-with open(sys.argv[1], 'rb') as f:
+
+args = parser.parse_args()
+
+
+with open(args.input, 'rb') as f:
   count = read32(f)
   for i in range(0, count - 1):
     f.seek(4 + 8 * i)
@@ -43,7 +50,8 @@ with open(sys.argv[1], 'rb') as f:
     f.seek(a)
     buf = f.read(length)
 
-    with open("/tmp/swep1r/texture-%d.bin" % i, 'wb') as t:
+    texture = os.path.join(args.out, "texture-%d.bin" % i)
+    with open(texture, 'wb') as t:
       f.read
       t.write(buf)
 
@@ -100,7 +108,8 @@ with open(sys.argv[1], 'rb') as f:
           #g = 0 #((pixel >> 5) & 0x1F) * 0xFF // 0x1F
           #b = 0 #((pixel >> 10) & 0x1F) * 0xFF // 0x1F
           pixels[x, y] = (a, r, g, b)
-      im.save("/tmp/swep1r/texture-%d.png" % i, 'PNG')
+      texture = os.path.join(args.out, 'texture-%d.png' % i)
+      im.save(texture, 'PNG')
 
 
     if False:

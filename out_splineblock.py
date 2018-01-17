@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
-import sys
 import struct
+
+import os
 from PIL import Image
+
+from arguments import parser
+
 
 def read8(f):
   return f.read(1)[0]
@@ -29,7 +33,10 @@ def shifter(a1):
     result = 16
   return result
 
-with open(sys.argv[1], 'rb') as f:
+args = parser.parse_args()
+
+
+with open(args.input, 'rb') as f:
   count = read32(f)
   for i in range(0, count - 1):
     f.seek(4 + 4 * i)
@@ -42,10 +49,12 @@ with open(sys.argv[1], 'rb') as f:
     f.seek(a)
     buf = f.read(length)
 
-    with open("/tmp/swep1r/spline-%d.bin" % i, 'wb') as t:
+    spline_bin = os.path.join(args.out, 'spline-%d.bin' % i)
+    with open(spline_bin, 'wb') as t:
       t.write(buf)
 
-    t = open("/tmp/swep1r/spline-%d.obj" % i, 'w')
+    spline_obj = os.path.join(args.out, 'spline-%d.obj' % i)
+    t = open(spline_obj, 'w')
 
     f.seek(a)
 
