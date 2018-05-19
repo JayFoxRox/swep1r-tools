@@ -191,6 +191,7 @@ with open(sys.argv[1], 'rb') as f:
     pixels = im.load()
     x = 0
     y = 0
+    prev_page_height = 0
     for j in range(0, len(pages)):
       page = pages[j]
 
@@ -200,6 +201,11 @@ with open(sys.argv[1], 'rb') as f:
       page_height = page[1]
       page_offset = page[2]
 
+      if (x + page_width) > width:
+        print("Reached border")
+        x = 0
+        y += prev_page_height
+
       if fmt == 0x0201:
         page_width = (page_width + 0x7) & 0xFFFFFFF8
       elif fmt == 0x0400:
@@ -208,6 +214,15 @@ with open(sys.argv[1], 'rb') as f:
         page_width = (page_width + 0xF) & 0xFFFFFFF0
       elif fmt == 0x0401:
         page_width = (page_width + 0x7) & 0xFFFFFFF8
+      elif fmt == 0x0003:
+        pass
+        #page_width = (page_width + 0xF) & 0xFFFFFFF0
+      else:
+        print("Unknown format: 0x%04X" % fmt)
+        assert(False)
+
+      im_page = Image.new("RGBA", (page_width, page_height))
+      pixels_page = im_page.load()
 
       f.seek(off_a + page_offset)
 
@@ -216,6 +231,10 @@ with open(sys.argv[1], 'rb') as f:
       for page_y in range(0, page_height):
         for page_x in range(0, page_width):
           r, g, b, a = reader()
+          #print(page_x)
+          #print(page_y)
+          pixels_page[page_x, page_y] = (r, g, b, a)
+
           abs_x = x + page_x
           abs_y = y - page_y + page_height - 1
           if (abs_x < width):
@@ -223,11 +242,10 @@ with open(sys.argv[1], 'rb') as f:
               pixels[abs_x, abs_y] = (r, g, b, a)
 
       x += page_width
-      if x >= width:
-        print("Reached border")
-        x = 0
-        y += page_height
-        if y == height:
-          print("Complete")
-          break
+      prev_page_height = page_height
+
+
+
+      #im_page.save("/tmp/swep1r/sprite-%d_%d-0x%04X.png" % (i, j, fmt), 'PNG')
+
     im.save("/tmp/swep1r/sprite-%d.png" % i, 'PNG')
