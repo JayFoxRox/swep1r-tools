@@ -13,6 +13,7 @@
 - parse-racer-tab.py: Validates racer.tab translation files
 - parse-savedata.py: Parses (tgfd.dat, 4056 bytes) and profile (*.sav, 84 bytes) files
 - decompress.c: Decompress "Comp" modelblock chunks (only found in N64 version)
+- extract-data.c: Extracts hardcoded data from swep1rcr.exe
 
 Also [check the OpenSWE1R Wiki for more projects and similar tools](https://github.com/OpenSWE1R/openswe1r/wiki/Useful-Resources).
 
